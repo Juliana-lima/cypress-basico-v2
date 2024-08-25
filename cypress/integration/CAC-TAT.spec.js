@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 import '../support/commands.js'
 const longText = 'Amor é fogo que arde sem se ver, é ferida que dói, e não se sente; é um contentamento descontente, é dor que desatina sem doer.';
-
+const THREE_SECONDS_IN_MS = 3000;
 
 describe('Central de Atendimento ao Cliente TAT', function() {
     beforeEach(() => {
@@ -13,6 +13,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     })
 
     it('Preenche os campos obrigatórios e envia o formulário', () => {
+        cy.clock()
 
         cy.get('#firstName')
         .should('be.empty')
@@ -34,11 +35,19 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.contains('button', 'Enviar')
         .click()
 
-        cy.get('span[class="success"]')
-        .should('have.text', '\n      Mensagem enviada com sucesso.\n    ')
+        cy.get('.success').should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.get('.success').should('be.not.visible')
+
+        //cy.get('span[class="success"]')
+        //.should('have.text', '\n      Mensagem enviada com sucesso.\n    ')
     });
 
     it('Exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', () => {
+        cy.clock()
+
         cy.get('#firstName')
         .should('be.empty')
         .type('Juliana')
@@ -59,8 +68,14 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.get('button[type="submit"]') //Propriedade button
         .click()
 
-        cy.get('span[class="error"]')
-        .should('have.text', '\n      Valide os campos obrigatórios!\n    ')
+        cy.get('.error').should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.get('.error').should('be.not.visible')
+
+        //cy.get('span[class="error"]')
+        //.should('have.text', '\n      Valide os campos obrigatórios!\n    ')
     });
 
     it('verificando campo telefone se apenas aceita números', () => {
@@ -69,6 +84,8 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         .should('be.empty')
     });
     it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', () => {
+        cy.clock()
+
         cy.get('#phone-checkbox')
         .check()
         
@@ -92,8 +109,11 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.get('button[type="submit"]') //Propriedade
         .click()
 
-        cy.get('.error') //clase error
-        .should('be.visible')
+        cy.get('.error').should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.get('.error').should('be.not.visible')
     });
 
     it('preenche e limpa os campos nome, sobrenome, email e telefone', () => {
@@ -123,25 +143,35 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     });
 
     it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios.', () => {
-        cy.get('button[type="submit"]') //Propriedade
-        .click()
+        cy.clock()
 
-        cy.get('.error') //clase error
-        .should('be.visible')
+        cy.get('button[type="submit"]').click()
+
+        cy.get('.error').should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.get('.error').should('be.not.visible')
     });
 
     it('envia o formulário com sucesso usando um comando customizado', function() {
+        cy.clock()
         cy.fillMandatoryFieldsAndSubmit()
-        cy.get('.success')
-        .should('be.visible')
+        cy.get('.success').should('be.visible')
+
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.get('.success').should('be.not.visible')
         
     });
 
     it('seleciona um produto (YouTube) por seu texto', () => {
+        cy.clock()
         cy.fillMandatoryFieldsAndSubmit()
         cy.get('select').select('youtube').should('have.value','youtube')
-        cy.get('.success')
-        .should('be.visible')
+        cy.get('.success').should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)
+        cy.get('.success').should('be.not.visible')
     });
 
     it('seleciona um produto (Mentoria) por seu valor (value)', () => {
